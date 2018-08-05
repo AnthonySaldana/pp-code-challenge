@@ -1,7 +1,7 @@
 // Program Control Paramters
 const generations = 20;
 
-let grid = [
+let OGgrid = [
   [0,0,0,0,0,0,0,0,0,0],
   [0,0,1,1,0,0,0,0,0,0],
   [0,0,0,0,2,0,0,0,0,0],
@@ -14,15 +14,7 @@ let grid = [
   [0,0,0,0,0,0,0,0,0,0]
 ];
 
-document.getElementById('initial-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(grid) + "</p>";
-
-/*let grid = [
-  [0,0,1,0,0],
-  [0,0,1,1,0],
-  [0,2,2,1,0],
-  [0,0,0,1,0],
-  [0,0,0,0,0],
-];*/
+document.getElementById('initial-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(OGgrid) + "</p>";
 
 let emptyGrid = [
   [0,0,0,0,0,0,0,0,0,0],
@@ -36,14 +28,6 @@ let emptyGrid = [
   [0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0]
 ];
-
-/*let nextGrid = [
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0]
-];*/
 
 const neighborCount = function(grid, row, cell) {
   let neighbors = 0;
@@ -72,7 +56,6 @@ const neighborCount = function(grid, row, cell) {
 }
 
 const iterator = function( grid, nextGrid, generation ){
-  console.log(generation)
   for( let row = 0; row < grid.length; row++ ){
     for( let cell = 0; cell < grid[row].length; cell++ ){
       let ncount = neighborCount(grid, row, cell);
@@ -119,8 +102,20 @@ const iterator = function( grid, nextGrid, generation ){
   if( generation >= generations ){
     return true;
   }else{
-    return iterator(nextGrid, emptyGrid, generation + 1);
+    let reEmptyGrid = [
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0]
+    ];
+    return iterator(nextGrid, reEmptyGrid, generation + 1);
   }
 }
 
-iterator(grid, emptyGrid, 1);
+iterator(OGgrid, emptyGrid, 1);
