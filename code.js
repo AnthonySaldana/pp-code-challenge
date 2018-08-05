@@ -1,3 +1,50 @@
+// Program Control Paramters
+const generations = 20;
+
+let grid = [
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,1,1,0,0,0,0,0,0],
+  [0,0,0,0,2,0,0,0,0,0],
+  [0,0,0,1,2,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,1,0,0,0,0,0,0,0],
+  [0,2,1,0,0,0,0,0,0,0],
+  [0,2,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0]
+];
+
+document.getElementById('initial-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(grid) + "</p>";
+
+/*let grid = [
+  [0,0,1,0,0],
+  [0,0,1,1,0],
+  [0,2,2,1,0],
+  [0,0,0,1,0],
+  [0,0,0,0,0],
+];*/
+
+let emptyGrid = [
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0]
+];
+
+/*let nextGrid = [
+  [0,0,0,0,0],
+  [0,0,0,0,0],
+  [0,0,0,0,0],
+  [0,0,0,0,0],
+  [0,0,0,0,0]
+];*/
+
 const neighborCount = function(grid, row, cell) {
   let neighbors = 0;
   let adultCount = 0;
@@ -24,95 +71,56 @@ const neighborCount = function(grid, row, cell) {
   };
 }
 
-/*let grid = [
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,1,1,0,0,0,0,0,0],
-  [0,0,0,0,2,0,0,0,0,0],
-  [0,0,0,1,2,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,1,0,0,0,0,0,0,0],
-  [0,2,1,0,0,0,0,0,0,0],
-  [0,2,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0]
-];*/
+const iterator = function( grid, nextGrid, generation ){
+  console.log(generation)
+  for( let row = 0; row < grid.length; row++ ){
+    for( let cell = 0; cell < grid[row].length; cell++ ){
+      let ncount = neighborCount(grid, row, cell);
+      let value = grid[row][cell];
+      // Empty Cell Rules
+      // 1. has Exactly 2 adult neighbors - replace with one : reproduction
+      // 2. Otherwise - nothing : No Change
+      if( value == 0 && ncount.adults == 2 ){
+        nextGrid[row][cell] = 1;
+      }
 
-let grid = [
-  [0,0,1,0,0],
-  [0,0,1,1,0],
-  [0,2,2,1,0],
-  [0,0,0,1,0],
-  [0,0,0,0,0],
-];
+      // Newborn (1) cell rules
+      // 1. >= 5 neighbors - replace with 0 : overcrowding
+      // 2. <= 1 neighbors - replace with 0 : isolation
+      // 3. otherwise - replace cell with 2 : growing up
+      if( value == 1 ){
+        if(ncount.count >= 5 || ncount.count <= 1){
+          nextGrid[row][cell] = 0;
+        }else{
+          nextGrid[row][cell] = 2;
+        }
+      }
 
-/*let nextGrid = [
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0]
-];*/
+      // Adult (2) cell rules
+      // 1. >= 3 total neighbors - replace with 0 : overcrowding
+      // 2. 0 neighbors - replace with 0 : isolation
+      // 3. otherwise - replace with 3 : growing up
+      if( value == 2 ){
+        if( ncount.count >= 3 || ncount.count < 1 ){
+          nextGrid[row][cell] = 0;
+        }else{
+          nextGrid[row][cell] = 3;
+        }
+      }
 
-let nextGrid = [
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0],
-  [0,0,0,0,0]
-];
-
-document.getElementById('initial-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(grid) + "</p>";
-for( let row = 0; row < grid.length; row++ ){
-  for( let cell = 0; cell < grid[row].length; cell++ ){
-    let ncount = neighborCount(grid, row, cell);
-    let value = grid[row][cell];
-    console.log("Stats");
-    console.log("Value: " + value);
-    console.log("Row: " + row);
-    console.log("Cell: " + cell);
-    console.log("ncount :"  + ncount);
-    // Empty Cell Rules
-    // 1. has Exactly 2 adult neighbors - replace with one : reproduction
-    // 2. Otherwise - nothing : No Change
-    if( value == 0 && ncount.adults == 2 ){
-      nextGrid[row][cell] = 1;
-    }
-
-    // Newborn (1) cell rules
-    // 1. >= 5 neighbors - replace with 0 : overcrowding
-    // 2. <= 1 neighbors - replace with 0 : isolation
-    // 3. otherwise - replace cell with 2 : growing up
-    if( value == 1 ){
-      if(ncount.count >= 5 || ncount.count <= 1){
+      // Elder (3) cell rules
+      // 1. replace with 0 : natural causes
+      if( value == 3 ){
         nextGrid[row][cell] = 0;
-      }else{
-        nextGrid[row][cell] = 2;
       }
     }
-
-    // Adult (2) cell rules
-    // 1. >= 3 total neighbors - replace with 0 : overcrowding
-    // 2. 0 neighbors - replace with 0 : isolation
-    // 3. otherwise - replace with 3 : growing up
-    if( value == 2 ){
-      if( ncount.count >= 3 || ncount.count < 1 ){
-        nextGrid[row][cell] = 0;
-      }else{
-        nextGrid[row][cell] = 3;
-      }
-    }
-
-    // Elder (3) cell rules
-    // 1. replace with 0 : natural causes
-    if( value == 3 ){
-      nextGrid[row][cell] = 0;
-    }
+  }
+  document.getElementById('final-state').innerHTML += "<p><b>Generation #"+ generation +"</b></p><p style='width: 200px;'>" + JSON.stringify(nextGrid) + "</p>";
+  if( generation >= generations ){
+    return true;
+  }else{
+    return iterator(nextGrid, emptyGrid, generation + 1);
   }
 }
 
-document.getElementById('final-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(nextGrid) + "</p>";
+iterator(grid, emptyGrid, 1);
