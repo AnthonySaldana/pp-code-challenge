@@ -6,17 +6,17 @@ const neighborCount = function(grid, row, cell) {
   const preCell = cell - 1;
   const postCell = cell + 1;
   if( grid[preRow] ){
-    if( grid[preRow][preCell] > 0 ){ neighbors++; }
+    if( grid[preRow][preCell] > 0 && preCell > 0 ){ neighbors++; }
     if( grid[preRow][cell] > 0 ){ neighbors++; }
-    if( grid[preRow][postCell] > 0 ){ neighbors++; }
+    if( grid[preRow][postCell] > 0 && postCell <= grid[row].length ){ neighbors++; }
   }
   if( grid[postRow] ){
-    if( grid[postRow][preCell] > 0 ){ neighbors++; }
+    if( grid[postRow][preCell] > 0 && preCell > 0 ){ neighbors++; }
     if( grid[postRow][cell] > 0 ){ neighbors++; }
-    if( grid[postRow][postCell] > 0 ){ neighbors++; }
+    if( grid[postRow][postCell] > 0 && postCell <= grid[row].length ){ neighbors++; }
   }
-  if( grid[row][preCell] > 0 ){ neighbors++; }
-  if( grid[row][postCell] > 0 ){ neighbors++; }
+  if( grid[row][preCell] > 0 && preCell > 0 ){ neighbors++; }
+  if( grid[row][postCell] > 0 && postCell <= grid[row].length ){ neighbors++; }
   return neighbors;
 }
 
@@ -33,12 +33,29 @@ let grid = [
   [0,0,0,0,0,0,0,0,0,0]
 ];
 
+let nextGrid = [
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0]
+];
+
 document.getElementById('initial-state').innerHTML = "<p style='width: 200px;'>" + JSON.stringify(grid) + "</p>";
-let nextGrid = grid;
 for( let row = 0; row < grid.length; row++ ){
   for( let cell = 0; cell < grid[row].length; cell++ ){
     let ncount = neighborCount(grid, row, cell);
-    let value = grid[row][cell]
+    let value = grid[row][cell];
+    console.log("Stats");
+    console.log("Value: " + value);
+    console.log("Row: " + row);
+    console.log("Cell: " + cell);
+    console.log("ncount :"  + ncount);
     // Empty Cell Rules
     // 1. has Exactly 2 adult neighbors - replace with one : reproduction
     // 2. Otherwise - nothing : No Change
